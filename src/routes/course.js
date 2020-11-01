@@ -51,7 +51,6 @@ router.get("/allcourses", async (req, res) => {
     };
     final();
   } catch (e) {
-    console.log(e);
     res.status(500).send(e);
   }
 });

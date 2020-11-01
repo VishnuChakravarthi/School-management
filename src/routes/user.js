@@ -79,7 +79,6 @@ router.post("/users/courses/:id", auth, async (req, res) => {
 router.get("/courses/student", auth, async (req, res) => {
   try {
     await req.user.populate("courses.course").execPopulate();
-    console.log(req.user);
     res.send(req.user.courses);
   } catch (e) {
     res.status(500).send();
