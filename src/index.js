@@ -12,6 +12,10 @@ app.use(cors());
 app.use(userRoute);
 app.use(courseRoute);
 
+app.get("/", (req, res) => {
+  res.send("Hello there");
+});
+
 app.listen(port, () => {
   console.log(`Server is up and running at ${port}`);
 });
