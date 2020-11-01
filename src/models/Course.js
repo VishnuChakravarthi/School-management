@@ -1,38 +1,38 @@
 const mongoose = require("mongoose");
-const validator = require("validator");
 
 const courseSchema = new mongoose.Schema({
-  courseId: {
+  id: {
     type: String,
     required: true,
     unique: true,
   },
-  courseName: {
+  name: {
     type: String,
     required: true,
   },
-  courseDept: {
+  department: {
     type: String,
     required: true,
   },
-  courseRoom: {
+  room: {
     type: String,
     required: true,
   },
-  courseTeam: {
+  team: {
     type: String,
     required: true,
   },
   description: {
     type: String,
   },
-  waitlistCapacity: {
-    type: Number,
+  waitlistcapacity: {
+    type: String,
     required: true,
   },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: "User",
   },
 });
 

@@ -31,7 +31,7 @@ const userSchema = new mongoose.Schema({
       }
     },
   },
-  userType: {
+  type: {
     type: String,
     required: true,
   },
@@ -83,6 +83,12 @@ const userSchema = new mongoose.Schema({
       },
     },
   ],
+});
+
+userSchema.virtual("user", {
+  ref: "Course",
+  localField: "_id",
+  foreignField: "creator",
 });
 
 userSchema.methods.toJSON = function () {

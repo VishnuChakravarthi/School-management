@@ -6,12 +6,12 @@ const User = require("../models/User");
 
 router.post("/courses/create", auth, async (req, res) => {
   const course = new Course({
-    ...req.body,
+    ...req.body.data,
     creator: req.user._id,
   });
 
   try {
-    if (req.user.userType !== "staff") {
+    if (req.user.type !== "staff") {
       res.status(403).send();
     }
     await course.save();
@@ -23,7 +23,7 @@ router.post("/courses/create", auth, async (req, res) => {
 
 router.get("/courses", auth, async (req, res) => {
   try {
-    if (req.user.userType !== "staff") {
+    if (req.user.type !== "staff") {
       res.status(403).send();
     }
     const courses = await Course.find({ creator: req.user._id });
@@ -33,13 +33,37 @@ router.get("/courses", auth, async (req, res) => {
   }
 });
 
+router.get("/allcourses", async (req, res) => {
+  try {
+    const courses = await Course.find({});
+
+    async function asyncForEach(array, callback) {
+      for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+      }
+    }
+
+    const final = async () => {
+      await asyncForEach(courses, async (course) => {
+        await course.populate("creator").execPopulate();
+      });
+      res.status(200).send(courses);
+    };
+    final();
+  } catch (e) {
+    console.log(e);
+    res.status(500).send(e);
+  }
+});
+
 router.get("/courses/:id", auth, async (req, res) => {
   const _id = req.params.id;
   try {
-    const course = await Course.findOne({ _id, creator: req.user._id });
+    const course = await Course.findOne({ _id });
     if (!course) {
       return res.status(404).send();
     }
+    await course.populate("creator").execPopulate();
     res.status(200).send(course);
   } catch (e) {
     res.status(500).send();

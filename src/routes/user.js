@@ -5,7 +5,7 @@ const Course = require("../models/Course");
 const auth = require("../middleware/auth");
 
 router.post("/users/create", async (req, res) => {
-  const user = new User(req.body);
+  const user = new User(req.body.data);
   try {
     await user.save();
     const token = await user.generateToken();
@@ -34,12 +34,12 @@ router.get("/users/me", auth, async (req, res) => {
 });
 
 router.patch("/users/me", auth, async (req, res) => {
-  const fields = Object.keys(req.body);
+  const fields = Object.keys(req.body.data);
 
   try {
     const user = await User.findById(req.user.id);
     fields.forEach((field) => {
-      user[field] = req.body[field];
+      user[field] = req.body.data[field];
     });
     await user.save();
 
@@ -70,13 +70,13 @@ router.post("/users/courses/:id", auth, async (req, res) => {
     req.user.courses = req.user.courses.concat({ course: req.params.id });
     await req.user.save();
 
-    res.send(req.user);
+    res.send(req.user.courses);
   } catch (e) {
     res.status(500).send();
   }
 });
 
-router.get("/users/courses", auth, async (req, res) => {
+router.get("/courses/student", auth, async (req, res) => {
   try {
     await req.user.populate("courses.course").execPopulate();
     console.log(req.user);
